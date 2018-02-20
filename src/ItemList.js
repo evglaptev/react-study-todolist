@@ -7,7 +7,7 @@ class ItemList extends Component {
   }
 
   click(e) {
-    this.props.change(e);
+    this.props.change();
   }
 
   render() {
