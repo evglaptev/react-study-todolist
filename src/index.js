@@ -6,16 +6,14 @@ import { createStore, applyMiddleware } from "redux";
 import todoReducer from "./reducer";
 import { composeWithDevTools } from "redux-devtools-extension";
 import thunk from "redux-thunk";
-import * as firebase from "firebase";
-
 const store = createStore(
-  todoReducer(firebase),
+  todoReducer,
   composeWithDevTools(applyMiddleware(thunk))
 );
 
 ReactDOM.render(
   <Provider store={store}>
-    <App firebase={firebase} />
+    <App />
   </Provider>,
   document.getElementById("root")
 );

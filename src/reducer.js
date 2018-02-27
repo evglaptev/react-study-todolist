@@ -1,47 +1,44 @@
 const initStore = {
-  list: [
-    { text: "Make TODO list", status: true },
-    { text: "Buy a ticket for metro", status: false }
-  ]
+  addIsActive: false
 };
-export default function todoReducer(firebase) {
-  const config = {
-    apiKey: "AIzaSyB9lnOWc-6SkYbdO0tPSZyCY38VXNFVQsE",
-    authDomain: "study-database.firebaseapp.com",
-    databaseURL: "https://study-database.firebaseio.com",
-    projectId: "study-database",
-    storageBucket: "study-database.appspot.com",
-    messagingSenderId: "631285676671"
-  };
-  firebase.initializeApp(config);
-  const database = firebase.database();
-  return (state = initStore, action) => {
-    switch (action.type) {
-      case "ADD_TODO":
-        const newItem = { text: action.text, status: false };
-        state = {
-          list: [...state.list, newItem]
-        };
-        database
-          .ref("users/" + 0 + "/todos/" + status.list.length)
-          .set({ newItem });
-        break;
-      case "CHANGE_STATUS_TODO":
-        state = {
-          list: state.list.map((el, i) => ({
-            text: el.text,
-            status: action.index === i ? !el.status : el.status
-          }))
-        };
-        if (action.index === i) {
-          database.ref("users/" + 0 + "/todos/" + i).set({ newItem });
-        }
 
-        break;
+export default function todoReducer(state = initStore, action) {
+  switch (action.type) {
+    case "ADD_TODO":
+      state = Object.assign({}, state, { list: [...state.list, action.el] });
+      break;
+    case "ADD_TODO_SUCCESS":
+      console.log("ADD_TODO_SUCCESS");
+      break;
+    case "CHANGE_STATUS_TODO":
+      state = Object.assign({}, state, {
+        list: state.list.map((el, i) => ({
+          text: el.text,
+          status: action.index === i ? !el.status : el.status
+        }))
+      });
 
-      default:
-        console.warn("default action type");
-    }
-    return state;
-  };
+      break;
+    case "CHANGE_STATUS_TODO_SUCCESS":
+      console.log("CHANGE_STATUS_TODO_SUCCESS");
+
+      break;
+    case "ACTIVE_ADD_TODO":
+      state = Object.assign({}, state, { addIsActive: true });
+
+      break;
+    case "INACTIVE_ADD_TODO":
+      state = Object.assign({}, state, { addIsActive: false });
+
+      break;
+    case "INIT_TODO_LIST":
+      state = Object.assign({}, state, action.todoList);
+      console.log("INIT_TODO_LIST");
+      break;
+
+    default:
+      console.log("action_type", action.type);
+      console.warn("default action type");
+  }
+  return state;
 }
