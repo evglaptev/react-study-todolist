@@ -1,45 +1,36 @@
-const initStore = {
-  list: [
-    { text: "Make TODO list", status: true },
-    { text: "Buy a ticket for metro", status: false }
-  ]
+export const asyncAddTodo = (database, dispatch) => async text => {
+  dispatch({ type: "INACTIVE_ADD_TODO" });
+  const newKey = database.ref().push().key;
+  let newObj = {};
+  const newItem = { text: text, status: false, key: newKey };
+  newObj[newKey] = newItem;
+  dispatch({ type: "ADD_TODO", el: newItem });
+  await database.ref().update(newObj);
+  dispatch({ type: "ADD_TODO_SUCCESS" });
+  dispatch({ type: "ACTIVE_ADD_TODO" });
 };
-
-export default function todoReducer(state = initStore, action) {
-  switch (action.type) {
-    case "ADD_TODO":
-      state = {
-        list: [...state.list, action.elemList]
-      };
-      break;
-    case "ADD_TODO_SUCCESS":
-      console.log("ADD_TODO_SUCCESS");
-      break;
-    case "CHANGE_STATUS_TODO":
-      state = {
-        list: state.list.map((el, i) => {
-          const newItem = {
-            text: el.text,
-            status: action.index === i ? !el.status : el.status
-          };
-          if (action.index === i) {
-            // let data = firebase.database().ref(`/todos/${i}/`);
-            // data.update(newItem);
-            // console.log("data", data);
-            // console.log("upd", data.update({ lol: "kek azaza" }));
-          }
-          return newItem;
-        })
-      };
-
-      break;
-    case "CHANGE_STATUS_TODO_SUCCESS":
-      console.log("CHANGE_STATUS_TODO_SUCCESS");
-
-      break;
-
-    default:
-      console.warn("default action type");
-  }
-  return state;
-}
+export const asyncChangeStatus = (database, dispatch) => async key => {
+  dispatch({ type: "CHANGE_STATUS_TODO", key: key });
+  dispatch(async (dis, getSt) => {
+    const oldElem = getSt().list.filter(el => el.key === key)[0];
+    let newObj = {};
+    newObj[key] = Object.assign({}, oldElem);
+    !newObj[key].status;
+    await database.ref().update(newObj);
+    dispatch({ type: "CHANGE_STATUS_TODO_SUCCESS", key: key });
+  });
+};
+export const asyncGetDataFromServer = (database, dispatch) => async () => {
+  let keys = [],
+    arr = [],
+    todoList = null;
+  await database
+    .ref("/")
+    .once("value")
+    .then(lol => (todoList = lol.val()));
+  keys = Object.keys(todoList || []);
+  arr = keys.map(key => todoList[key]);
+  console.log("inid disp");
+  dispatch({ type: "INIT_TODO_LIST", todoList: { list: arr } });
+  dispatch({ type: "ACTIVE_ADD_TODO" });
+};

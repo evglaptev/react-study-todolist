@@ -43,3 +43,4 @@ export default function todoReducer(state = initStore, action) {
   }
   return state;
 }
+// export default combineReducers({ todoReducer });
