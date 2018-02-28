@@ -12,10 +12,11 @@ export default function todoReducer(state = initStore, action) {
       break;
     case "CHANGE_STATUS_TODO":
       state = Object.assign({}, state, {
-        list: state.list.map((el, i) => ({
-          text: el.text,
-          status: action.index === i ? !el.status : el.status
-        }))
+        list: state.list.map(el =>
+          Object.assign({}, el, {
+            status: action.key === el.key ? !el.status : el.status
+          })
+        )
       });
 
       break;

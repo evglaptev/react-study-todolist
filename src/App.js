@@ -92,10 +92,15 @@ export default connect(
       onChangeStatus: async key => {
         dispatch({ type: "CHANGE_STATUS_TODO", key: key });
         dispatch(async (dis, getSt) => {
-          const oldElem = getSt().list[key];
-          await database
-            .ref("/" + key)
-            .update(Object.assign({}, oldElem, { status: !oldElem.status }));
+          const oldElem = getSt().list.filter(el => el.key === key)[0];
+          let newObj = {};
+          console.log(typeof oldElem.status);
+          console.log("<--typeof");
+          newObj[key] = Object.assign({}, oldElem);
+          !newObj[key].status;
+          console.log("newObj", newObj);
+          console.log("oldElem", oldElem);
+          await database.ref().update(newObj);
           dispatch({ type: "CHANGE_STATUS_TODO_SUCCESS", key: key });
         });
       },
@@ -107,7 +112,7 @@ export default connect(
           .ref("/")
           .once("value")
           .then(lol => (todoList = lol.val()));
-        keys = Object.keys(todoList);
+        keys = Object.keys(todoList || []);
         arr = keys.map(key => todoList[key]);
         console.log("todolist", arr);
         dispatch({ type: "INIT_TODO_LIST", todoList: { list: arr } });
