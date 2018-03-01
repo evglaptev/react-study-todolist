@@ -36,3 +36,15 @@ export const asyncGetDataFromServer = (database, dispatch) => async () => {
   dispatch({ type: "INIT_TODO_LIST", todoList: { list: arr } });
   dispatch({ type: "ACTIVE_ADD_TODO" });
 };
+export const asyncDeleteByKey = (database, dispatch) => async key => {
+  dispatch({ type: "DELETE_TODO", key: key });
+  dispatch(async (dis, getSt) => {
+    console.log("getSt()", getSt());
+    console.log("getSt", getSt);
+    const oldElem = getSt().todoReducer.list.filter(el => el.key === key)[0];
+    let newObj = {};
+    newObj[key] = null;
+    await database.ref().update(newObj);
+    dispatch({ type: "DELETE_TODO_SUCCESS", key: key });
+  });
+};

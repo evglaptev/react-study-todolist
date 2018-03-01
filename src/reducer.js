@@ -27,6 +27,16 @@ function todoReducer(state = initStore, action) {
       console.log("CHANGE_STATUS_TODO_SUCCESS");
 
       break;
+    case "DELETE_TODO":
+      state = Object.assign({}, state, {
+        list: state.list.filter(el => action.key !== el.key)
+      });
+
+      break;
+    case "DELETE_TODO_SUCCESS":
+      console.log("DELETE_TODO_SUCCESS");
+
+      break;
     case "ACTIVE_ADD_TODO":
       state = Object.assign({}, state, { addIsActive: true });
       console.warn("newState--> ", state);
