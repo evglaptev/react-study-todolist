@@ -24,6 +24,7 @@ class App extends Component {
   }
 
   getList() {
+    console.log("this.props.testStore", this.props.testStore);
     return this.props.testStore &&
       this.props.testStore.list &&
       this.props.testStore.list.length > 0 ? (
@@ -47,6 +48,7 @@ class App extends Component {
   };
 
   render() {
+    console.warn("testStore-->     ", this.props.testStore);
     return (
       <div>
         <ul>{this.getList()}</ul>
@@ -64,7 +66,7 @@ class App extends Component {
 
 export default connect(
   state => ({
-    testStore: state
+    testStore: state.todoReducer
   }),
   dispatch =>
     (database => ({

@@ -12,7 +12,9 @@ export const asyncAddTodo = (database, dispatch) => async text => {
 export const asyncChangeStatus = (database, dispatch) => async key => {
   dispatch({ type: "CHANGE_STATUS_TODO", key: key });
   dispatch(async (dis, getSt) => {
-    const oldElem = getSt().list.filter(el => el.key === key)[0];
+    console.log("getSt()", getSt());
+    console.log("getSt", getSt);
+    const oldElem = getSt().todoReducer.list.filter(el => el.key === key)[0];
     let newObj = {};
     newObj[key] = Object.assign({}, oldElem);
     !newObj[key].status;

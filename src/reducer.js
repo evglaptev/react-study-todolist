@@ -1,14 +1,17 @@
+import { createStore, combineReducers, applyMiddleware } from "redux";
+
 const initStore = {
   addIsActive: false
 };
 
-export default function todoReducer(state = initStore, action) {
+function todoReducer(state = initStore, action) {
+  console.log("action_type----------->", action.type);
+  console.log("state----------->", state);
   switch (action.type) {
     case "ADD_TODO":
       state = Object.assign({}, state, { list: [...state.list, action.el] });
       break;
     case "ADD_TODO_SUCCESS":
-      console.log("ADD_TODO_SUCCESS");
       break;
     case "CHANGE_STATUS_TODO":
       state = Object.assign({}, state, {
@@ -26,7 +29,7 @@ export default function todoReducer(state = initStore, action) {
       break;
     case "ACTIVE_ADD_TODO":
       state = Object.assign({}, state, { addIsActive: true });
-
+      console.warn("newState--> ", state);
       break;
     case "INACTIVE_ADD_TODO":
       state = Object.assign({}, state, { addIsActive: false });
@@ -38,9 +41,7 @@ export default function todoReducer(state = initStore, action) {
       break;
 
     default:
-      console.log("action_type", action.type);
-      console.warn("default action type");
   }
   return state;
 }
-// export default combineReducers({ todoReducer });
+export default combineReducers({ todoReducer: todoReducer });
