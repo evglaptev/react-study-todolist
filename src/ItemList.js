@@ -18,9 +18,7 @@ class ItemList extends Component {
           <span className={this.props.data.status ? "resolved" : "unresolved"}>
             {this.props.data.text}
           </span>
-          <button onClick={this.props.delete} className="cross">
-            X
-          </button>
+          <button onClick={this.props.delete}>X</button>
         </div>
       </li>
     );
