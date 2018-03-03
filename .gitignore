@@ -6,6 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 
 *.lock
+build/*
 # Runtime data
 pids
 *.pid

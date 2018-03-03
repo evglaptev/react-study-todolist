@@ -5,8 +5,6 @@ const initStore = {
 };
 
 function todoReducer(state = initStore, action) {
-  console.log("action_type----------->", action.type);
-  console.log("state----------->", state);
   switch (action.type) {
     case "ADD_TODO":
       state = Object.assign({}, state, { list: [...state.list, action.el] });
@@ -24,8 +22,6 @@ function todoReducer(state = initStore, action) {
 
       break;
     case "CHANGE_STATUS_TODO_SUCCESS":
-      console.log("CHANGE_STATUS_TODO_SUCCESS");
-
       break;
     case "DELETE_TODO":
       state = Object.assign({}, state, {
@@ -34,24 +30,27 @@ function todoReducer(state = initStore, action) {
 
       break;
     case "DELETE_TODO_SUCCESS":
-      console.log("DELETE_TODO_SUCCESS");
-
-      break;
-    case "ACTIVE_ADD_TODO":
-      state = Object.assign({}, state, { addIsActive: true });
-      console.warn("newState--> ", state);
-      break;
-    case "INACTIVE_ADD_TODO":
-      state = Object.assign({}, state, { addIsActive: false });
-
       break;
     case "INIT_TODO_LIST":
       state = Object.assign({}, state, action.todoList);
-      console.log("INIT_TODO_LIST");
+
       break;
 
     default:
   }
   return state;
 }
-export default combineReducers({ todoReducer: todoReducer });
+function addButtonReducer(state = initStore, action) {
+  switch (action.type) {
+    case "ACTIVE_ADD_TODO":
+      state = Object.assign({}, state, { addIsActive: true });
+      break;
+    case "INACTIVE_ADD_TODO":
+      state = Object.assign({}, state, { addIsActive: false });
+      break;
+
+    default:
+  }
+  return state;
+}
+export default combineReducers({ todoReducer, addButtonReducer });

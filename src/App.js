@@ -59,7 +59,7 @@ class App extends Component {
         <ul>{this.getList()}</ul>
         <input type="text" ref={el => (this.input = el)} />
         <button
-          disabled={!this.props.testStore.addIsActive}
+          disabled={!this.props.addButtonReducer.addIsActive}
           onClick={this.clickAddBtn.bind(this)}
         >
           add
@@ -71,7 +71,8 @@ class App extends Component {
 
 export default connect(
   state => ({
-    testStore: state.todoReducer
+    testStore: state.todoReducer,
+    addButtonReducer: state.addButtonReducer
   }),
   dispatch =>
     (database => ({
