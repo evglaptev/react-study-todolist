@@ -2,41 +2,43 @@ import { createStore, combineReducers, applyMiddleware } from "redux";
 
 const initStore = {
   addIsActive: false,
-  list: [],
-  filterBy: "UNRESOLVER"
+  filterBy: "ALL"
 };
 
-function todoReducer(state = initStore, action) {
+function listReducer(list = [], action) {
   switch (action.type) {
     case "ADD_TODO":
-      state = Object.assign({}, state, { list: [...state.list, action.el] });
+      list = [...list, action.payload.newItem];
       break;
     case "ADD_TODO_SUCCESS":
       break;
     case "CHANGE_STATUS_TODO":
-      state = Object.assign({}, state, {
-        list: state.list.map(el =>
-          Object.assign({}, el, {
-            status: action.key === el.key ? !el.status : el.status
-          })
-        )
-      });
+      list = list.map(el =>
+        Object.assign({}, el, {
+          status: action.payload.key === el.key ? !el.status : el.status
+        })
+      );
 
       break;
     case "CHANGE_STATUS_TODO_SUCCESS":
       break;
     case "DELETE_TODO":
-      state = Object.assign({}, state, {
-        list: state.list.filter(el => action.key !== el.key)
-      });
+      list = list.filter(el => action.payload.key !== el.key);
 
       break;
     case "DELETE_TODO_SUCCESS":
       break;
     case "INIT_TODO_LIST":
-      state = Object.assign({}, state, action.todoList);
+      list = action.payload.list;
 
       break;
+
+    default:
+  }
+  return list;
+}
+function addButtonReducer(state = initStore, action) {
+  switch (action.type) {
     case "INIT_TODO_LIST_ERROR":
       state = Object.assign({}, state, { error: "CONNECT_ERROR" });
 
@@ -53,13 +55,6 @@ function todoReducer(state = initStore, action) {
       state = Object.assign({}, state, { filterBy: action.payload });
 
       break;
-
-    default:
-  }
-  return state;
-}
-function addButtonReducer(state = initStore, action) {
-  switch (action.type) {
     case "ACTIVE_ADD_TODO":
       state = Object.assign({}, state, { addIsActive: true });
       break;
@@ -71,4 +66,4 @@ function addButtonReducer(state = initStore, action) {
   }
   return state;
 }
-export default combineReducers({ todoReducer, addButtonReducer });
+export default combineReducers({ list: listReducer, addButtonReducer });

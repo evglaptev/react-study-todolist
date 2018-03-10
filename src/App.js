@@ -29,17 +29,19 @@ class App extends Component {
   }
 
   getList() {
-    return this.props.testStore &&
-      this.props.testStore.list &&
-      this.props.testStore.list.length > 0 ? (
-      this.props.testStore.list.map(data => (
-        <ItemList
-          key={data.key}
-          change={this.change(data.key)}
-          delete={this.delete(data.key)}
-          data={{ text: data.text, status: data.status }}
-        />
-      ))
+    console.log("this.props.store.list", this.props.store.list);
+    return this.props.store.list && this.props.store.list.length > 0 ? (
+      this.props.store.list.map(data => {
+        console.log("data", data);
+        return (
+          <ItemList
+            key={data.key}
+            change={this.change(data.key)}
+            delete={this.delete(data.key)}
+            data={{ text: data.text, status: data.status }}
+          />
+        );
+      })
     ) : (
       <label>TodoList is empty!</label>
     );
@@ -58,14 +60,20 @@ class App extends Component {
     this.setState({ text });
   };
 
-  filterBy = e => {
+  filterResolve = () => {
     this.props.filterBy("RESOLVED");
+  };
+  filterUnresolve = () => {
+    this.props.filterBy("UNRESOLVER");
+  };
+  filterAll = () => {
+    this.props.filterBy("ALL");
   };
 
   render() {
-    return this.props.testStore.error === "CONNECT_ERROR" ? (
+    return this.props.addButtonReducer.error === "CONNECT_ERROR" ? (
       <div>Bad network connection.</div>
-    ) : this.props.testStore.spinner ? (
+    ) : this.props.addButtonReducer.spinner ? (
       <div>Loading...</div>
     ) : (
       <div>
@@ -77,37 +85,41 @@ class App extends Component {
         >
           add
         </button>
-        <button onClick={this.filterBy}>Filter!</button>
+        <div>
+          <button onClick={this.filterAll}>all</button>
+          <button onClick={this.filterResolve}>resolved</button>
+          <button onClick={this.filterUnresolve}>unresolved</button>
+        </div>
       </div>
     );
   }
 }
 
 export default connect(
-  state => {
-    console.log("state", state);
-    console.log("state.filterBy", state.filterBy);
-    return {
-      testStore: {
-        ...state,
-        list: state.todoReducer.list.filter(el => {
-          switch (state.todoReducer.filterBy) {
-            case "ALL":
-              return true;
-            case "RESOLVED":
-              return el.status;
-            case "UNRESOLVER":
-              return !el.status;
+  state => ({
+    store: {
+      // ...state,
+      list: state.list.filter(el => {
+        console.log(
+          "state.addButtonReducer.filterBy ",
+          state.addButtonReducer.filterBy
+        );
+        switch (state.addButtonReducer.filterBy) {
+          case "ALL":
+            return true;
+          case "RESOLVED":
+            return el.status;
+          case "UNRESOLVER":
+            return !el.status;
 
-            default:
-              console.warn("default case in mapToProps filter function");
-              return true;
-          }
-        })
-      },
-      addButtonReducer: state.addButtonReducer
-    };
-  },
+          default:
+            console.warn("default case in mapToProps filter function");
+            return true;
+        }
+      })
+    },
+    addButtonReducer: state.addButtonReducer
+  }),
   dispatch =>
     (database => ({
       onAddTodo: asyncAddTodo(database, dispatch),
