@@ -21,6 +21,7 @@ class App extends Component {
 
   constructor(props) {
     super(props);
+    this.state = { text: "" };
   }
 
   componentDidMount() {
@@ -28,7 +29,6 @@ class App extends Component {
   }
 
   getList() {
-    console.log("this.props.testStore", this.props.testStore);
     return this.props.testStore &&
       this.props.testStore.list &&
       this.props.testStore.list.length > 0 ? (
@@ -46,39 +46,74 @@ class App extends Component {
   }
 
   clickAddBtn = e => {
-    if (this.input.value !== "") {
-      this.props.onAddTodo(this.input.value);
-      this.input.value = "";
+    const text = this.state.text;
+    if (text !== "") {
+      this.props.onAddTodo(text);
+      this.setState({ text: "" });
     }
   };
 
+  onChange = e => {
+    let text = e.target.value;
+    this.setState({ text });
+  };
+
+  filterBy = e => {
+    this.props.filterBy("RESOLVED");
+  };
+
   render() {
-    console.warn("testStore-->     ", this.props.testStore);
-    return (
+    return this.props.testStore.error === "CONNECT_ERROR" ? (
+      <div>Bad network connection.</div>
+    ) : this.props.testStore.spinner ? (
+      <div>Loading...</div>
+    ) : (
       <div>
         <ul>{this.getList()}</ul>
-        <input type="text" ref={el => (this.input = el)} />
+        <input type="text" value={this.state.text} onChange={this.onChange} />
         <button
           disabled={!this.props.addButtonReducer.addIsActive}
           onClick={this.clickAddBtn.bind(this)}
         >
           add
         </button>
+        <button onClick={this.filterBy}>Filter!</button>
       </div>
     );
   }
 }
 
 export default connect(
-  state => ({
-    testStore: state.todoReducer,
-    addButtonReducer: state.addButtonReducer
-  }),
+  state => {
+    console.log("state", state);
+    console.log("state.filterBy", state.filterBy);
+    return {
+      testStore: {
+        ...state,
+        list: state.todoReducer.list.filter(el => {
+          switch (state.todoReducer.filterBy) {
+            case "ALL":
+              return true;
+            case "RESOLVED":
+              return el.status;
+            case "UNRESOLVER":
+              return !el.status;
+
+            default:
+              console.warn("default case in mapToProps filter function");
+              return true;
+          }
+        })
+      },
+      addButtonReducer: state.addButtonReducer
+    };
+  },
   dispatch =>
     (database => ({
       onAddTodo: asyncAddTodo(database, dispatch),
       onChangeStatus: asyncChangeStatus(database, dispatch),
       deleteByKey: asyncDeleteByKey(database, dispatch),
+      filterBy: filter => dispatch({ type: "SET_FILTER", payload: filter }),
       getDataFromServer: asyncGetDataFromServer(database, dispatch)
     }))(database)
 )(App);

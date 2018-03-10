@@ -12,6 +12,8 @@ const store = createStore(
   composeWithDevTools(applyMiddleware(thunk))
 );
 
+window.store = store;
+
 ReactDOM.render(
   <Provider store={store}>
     <App />

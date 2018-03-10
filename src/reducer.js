@@ -1,7 +1,9 @@
 import { createStore, combineReducers, applyMiddleware } from "redux";
 
 const initStore = {
-  addIsActive: false
+  addIsActive: false,
+  list: [],
+  filterBy: "UNRESOLVER"
 };
 
 function todoReducer(state = initStore, action) {
@@ -33,6 +35,22 @@ function todoReducer(state = initStore, action) {
       break;
     case "INIT_TODO_LIST":
       state = Object.assign({}, state, action.todoList);
+
+      break;
+    case "INIT_TODO_LIST_ERROR":
+      state = Object.assign({}, state, { error: "CONNECT_ERROR" });
+
+      break;
+    case "RUN_SPINNER":
+      state = Object.assign({}, state, { spinner: true });
+
+      break;
+    case "STOP_SPINNER":
+      state = Object.assign({}, state, { spinner: false });
+
+      break;
+    case "SET_FILTER":
+      state = Object.assign({}, state, { filterBy: action.payload });
 
       break;
 

@@ -23,18 +23,30 @@ export const asyncChangeStatus = (database, dispatch) => async key => {
   });
 };
 export const asyncGetDataFromServer = (database, dispatch) => async () => {
-  let keys = [],
-    arr = [],
-    todoList = null;
-  await database
-    .ref("/")
-    .once("value")
-    .then(lol => (todoList = lol.val()));
-  keys = Object.keys(todoList || []);
-  arr = keys.map(key => todoList[key]);
-  console.log("inid disp");
-  dispatch({ type: "INIT_TODO_LIST", todoList: { list: arr } });
-  dispatch({ type: "ACTIVE_ADD_TODO" });
+  const firebaseValue = database.ref("/").once("value");
+  console.log("getDataFromServer");
+  try {
+    dispatch({ type: "RUN_SPINNER" });
+    await new Promise((res, rej) => {
+      firebaseValue.then(data => {
+        const todoList = data.val(),
+          keys = Object.keys(todoList || []),
+          arr = keys.map(key => todoList[key]);
+        dispatch({ type: "INIT_TODO_LIST", todoList: { list: arr } });
+        dispatch({ type: "ACTIVE_ADD_TODO" });
+        res();
+      });
+      setTimeout(() => rej("TIMEOUT_CONNECTION"), 5000);
+    });
+  } catch (e) {
+    console.warn("bad connection");
+    dispatch({ type: "INIT_TODO_LIST_ERROR" });
+  } finally {
+    dispatch({ type: "STOP_SPINNER" });
+  }
+
+  // .catch(e => dispatch({ type: "INIT_TODO_LIST_ERROR" }));
+  // console.log("lolsadfasdgasgasd");
 };
 export const asyncDeleteByKey = (database, dispatch) => async key => {
   dispatch({ type: "DELETE_TODO", key: key });
