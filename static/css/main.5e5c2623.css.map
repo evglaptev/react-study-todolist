@@ -1,0 +1,1 @@
+{"version":3,"sources":["ItemList.css"],"names":[],"mappings":"AAAA,UACE,4BAA8B,CAMhC,GACE,gBACA,cAAgB","file":"static/css/main.5e5c2623.css","sourcesContent":[".resolved {\n  text-decoration: line-through;\n}\n\n.unresolved {\n}\n\nli {\n  list-style: none;\n  font-size: 24px;\n}\n\n\n\n// WEBPACK FOOTER //\n// ./src/ItemList.css"],"sourceRoot":""}
