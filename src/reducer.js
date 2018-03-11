@@ -1,18 +1,35 @@
-import { createStore, combineReducers, applyMiddleware } from "redux";
+import { combineReducers } from "redux";
+import {
+  INACTIVE_ADD_TODO,
+  ADD_TODO,
+  ADD_TODO_SUCCESS,
+  ACTIVE_ADD_TODO,
+  CHANGE_STATUS_TODO,
+  CHANGE_STATUS_TODO_SUCCESS,
+  CONNECT_ERROR,
+  RUN_SPINNER,
+  INIT_TODO_LIST,
+  INIT_TODO_LIST_ERROR,
+  STOP_SPINNER,
+  DELETE_TODO,
+  DELETE_TODO_SUCCESS,
+  SET_FILTER,
+  ALL
+} from "./constants";
 
 const initStore = {
   addIsActive: false,
-  filterBy: "ALL"
+  filterBy: ALL
 };
 
 function listReducer(list = [], action) {
   switch (action.type) {
-    case "ADD_TODO":
+    case ADD_TODO:
       list = [...list, action.payload.newItem];
       break;
-    case "ADD_TODO_SUCCESS":
+    case ADD_TODO_SUCCESS:
       break;
-    case "CHANGE_STATUS_TODO":
+    case CHANGE_STATUS_TODO:
       list = list.map(el =>
         Object.assign({}, el, {
           status: action.payload.key === el.key ? !el.status : el.status
@@ -20,15 +37,15 @@ function listReducer(list = [], action) {
       );
 
       break;
-    case "CHANGE_STATUS_TODO_SUCCESS":
+    case CHANGE_STATUS_TODO_SUCCESS:
       break;
-    case "DELETE_TODO":
+    case DELETE_TODO:
       list = list.filter(el => action.payload.key !== el.key);
 
       break;
-    case "DELETE_TODO_SUCCESS":
+    case DELETE_TODO_SUCCESS:
       break;
-    case "INIT_TODO_LIST":
+    case INIT_TODO_LIST:
       list = action.payload.list;
 
       break;
@@ -39,26 +56,26 @@ function listReducer(list = [], action) {
 }
 function addButtonReducer(state = initStore, action) {
   switch (action.type) {
-    case "INIT_TODO_LIST_ERROR":
-      state = Object.assign({}, state, { error: "CONNECT_ERROR" });
+    case INIT_TODO_LIST_ERROR:
+      state = Object.assign({}, state, { error: CONNECT_ERROR });
 
       break;
-    case "RUN_SPINNER":
+    case RUN_SPINNER:
       state = Object.assign({}, state, { spinner: true });
 
       break;
-    case "STOP_SPINNER":
+    case STOP_SPINNER:
       state = Object.assign({}, state, { spinner: false });
 
       break;
-    case "SET_FILTER":
+    case SET_FILTER:
       state = Object.assign({}, state, { filterBy: action.payload });
 
       break;
-    case "ACTIVE_ADD_TODO":
+    case ACTIVE_ADD_TODO:
       state = Object.assign({}, state, { addIsActive: true });
       break;
-    case "INACTIVE_ADD_TODO":
+    case INACTIVE_ADD_TODO:
       state = Object.assign({}, state, { addIsActive: false });
       break;
 

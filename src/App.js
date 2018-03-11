@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import ItemList from "./ItemList";
-import { createStore } from "redux";
 import { connect } from "react-redux";
+
+import ItemList from "./ItemList";
 import {
   asyncAddTodo,
   asyncChangeStatus,
@@ -9,6 +9,14 @@ import {
   asyncDeleteByKey
 } from "./actions";
 import { getDataBase } from "./firebase";
+import {
+  SET_FILTER,
+  RESOLVED,
+  UNRESOLVER,
+  ALL,
+  CONNECT_ERROR
+} from "./constants";
+
 const database = getDataBase();
 
 class App extends Component {
@@ -29,19 +37,15 @@ class App extends Component {
   }
 
   getList() {
-    console.log("this.props.store.list", this.props.store.list);
     return this.props.store.list && this.props.store.list.length > 0 ? (
-      this.props.store.list.map(data => {
-        console.log("data", data);
-        return (
-          <ItemList
-            key={data.key}
-            change={this.change(data.key)}
-            delete={this.delete(data.key)}
-            data={{ text: data.text, status: data.status }}
-          />
-        );
-      })
+      this.props.store.list.map(data => (
+        <ItemList
+          key={data.key}
+          change={this.change(data.key)}
+          delete={this.delete(data.key)}
+          data={{ text: data.text, status: data.status }}
+        />
+      ))
     ) : (
       <label>TodoList is empty!</label>
     );
@@ -61,17 +65,17 @@ class App extends Component {
   };
 
   filterResolve = () => {
-    this.props.filterBy("RESOLVED");
+    this.props.filterBy(RESOLVED);
   };
   filterUnresolve = () => {
-    this.props.filterBy("UNRESOLVER");
+    this.props.filterBy(UNRESOLVER);
   };
   filterAll = () => {
-    this.props.filterBy("ALL");
+    this.props.filterBy(ALL);
   };
 
   render() {
-    return this.props.addButtonReducer.error === "CONNECT_ERROR" ? (
+    return this.props.addButtonReducer.error === CONNECT_ERROR ? (
       <div>Bad network connection.</div>
     ) : this.props.addButtonReducer.spinner ? (
       <div>Loading...</div>
@@ -100,16 +104,12 @@ export default connect(
     store: {
       // ...state,
       list: state.list.filter(el => {
-        console.log(
-          "state.addButtonReducer.filterBy ",
-          state.addButtonReducer.filterBy
-        );
         switch (state.addButtonReducer.filterBy) {
-          case "ALL":
+          case ALL:
             return true;
-          case "RESOLVED":
+          case RESOLVED:
             return el.status;
-          case "UNRESOLVER":
+          case UNRESOLVER:
             return !el.status;
 
           default:
@@ -125,7 +125,7 @@ export default connect(
       onAddTodo: asyncAddTodo(database, dispatch),
       onChangeStatus: asyncChangeStatus(database, dispatch),
       deleteByKey: asyncDeleteByKey(database, dispatch),
-      filterBy: filter => dispatch({ type: "SET_FILTER", payload: filter }),
+      filterBy: filter => dispatch({ type: SET_FILTER, payload: filter }),
       getDataFromServer: asyncGetDataFromServer(database, dispatch)
     }))(database)
 )(App);
